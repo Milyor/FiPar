@@ -1,8 +1,8 @@
 //
 //  TransactionRow.swift
-//  FinanceApp
+//  FiPar
 //
-//  Created by Miller A on 3/26/26.
+//  Created by Miller A on 5/26/26.
 //
 import SwiftUI
 
@@ -10,7 +10,7 @@ struct TransactionRow: View {
     var transaction: Transaction
     var body: some View {
         HStack {
-            Text(transaction.name)
+            Text(transaction.merchant)
             Spacer()
             Text(transaction.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
         }

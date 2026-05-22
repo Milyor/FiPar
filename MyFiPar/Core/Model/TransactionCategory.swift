@@ -1,8 +1,8 @@
 //
 //  TransactionCategory.swift
-//  FinanceApp
+//  MyFiPar
 //
-//  Created by Miller A on 4/9/26.
+//  Created by Miller A on 5/21/26.
 //
 
 enum TransactionCategory: String, Codable, CaseIterable {
