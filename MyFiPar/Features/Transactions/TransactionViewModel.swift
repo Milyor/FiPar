@@ -1,8 +1,8 @@
 //
 //  TransactionViewModel.swift
-//  FinanceApp
+//  MyFiPar
 //
-//  Created by Miller A on 3/26/26.
+//  Created by Miller A on 5/22/26.
 //
 import Foundation
 import SwiftData
@@ -14,24 +14,13 @@ class TransactionViewModel {
     var searchText: String = ""
     var errorMessage: String = ""
     
-    func filtered(transaction: [Transaction]) -> [Transaction] {
-        if searchText.isEmpty {
-            return transaction
-        } else {
-            return transaction.filter { $0.name.localizedCaseInsensitiveContains(searchText) || $0.category.rawValue == searchText}
-        }
-    }
-    
     func addTransaction(transaction: Transaction, context: ModelContext) {
 
         let startOfDay = Calendar.current.startOfDay(for: transaction.date)
         guard let endOfDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay) else {return}
-        let name = transaction.name
         let amount = transaction.amount
-        
         var descriptor = FetchDescriptor<Transaction>(
             predicate: #Predicate<Transaction> {
-                $0.name == name &&
                 $0.amount == amount &&
                 $0.date > startOfDay &&
                 $0.date < endOfDay
@@ -58,6 +47,13 @@ class TransactionViewModel {
     
     func deleteTransaction(transaction: Transaction, context: ModelContext) {
         context.delete(transaction)
+    }
+    
+    func filtered(transactions: [Transaction]) -> [Transaction] {
+        guard !searchText.isEmpty else { return transactions }
+        return transactions.filter {
+            ($0.merchant ?? "").localizedStandardContains(searchText)
+        }
     }
         
 

@@ -9,53 +9,51 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+    @Environment(\.modelContext) private var context
+    @State private var selectedTab: Section = .home
+    @State private var showingQuickAdd = false
+    @State private var transactionViewModel = TransactionViewModel()
+
+    enum Section: Hashable {
+        case home
+        case expenses
+        case add
+    }
 
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
-                }
-                .onDelete(perform: deleteItems)
+        TabView(selection: tabSelection) {
+            Tab("", systemImage: "house.fill", value: .home) {
+                HomeView()
             }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
+            Tab("", systemImage: "plus", value: .add) {
+                Color.clear
             }
-        } detail: {
-            Text("Select an item")
+            Tab("", systemImage: "list.bullet", value: .expenses) {
+                TransactionView()
+            }
+        }
+        .sheet(isPresented: $showingQuickAdd) {
+            QuickAdd { newTransaction in
+                transactionViewModel.addTransaction(transaction: newTransaction, context: context)
+            }
         }
     }
 
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
+    private var tabSelection: Binding<Section> {
+        Binding(
+            get: { selectedTab },
+            set: { newValue in
+                if newValue == .add {
+                    showingQuickAdd = true
+                } else {
+                    selectedTab = newValue
+                }
             }
-        }
+        )
     }
 }
 
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+        .modelContainer(for: [Transaction.self, Goal.self], inMemory: true)
 }

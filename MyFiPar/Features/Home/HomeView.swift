@@ -21,13 +21,16 @@ struct HomeView: View {
             TimelineView(MonthSchedule()) { context in
                 content(referenceDate: context.date)
             }
-            .navigationTitle("Home")
             .navigationBarTitleDisplayMode(.inline)
             .background(Color(.systemGroupedBackground))
+            
         }
         .task {
             viewModel.ensurePlaceholderGoal(in: modelContext, existing: goals)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .scenePadding(.horizontal)
+        .background(Color(.systemGroupedBackground))
     }
 
     @ViewBuilder
@@ -39,7 +42,7 @@ struct HomeView: View {
         let recent = viewModel.recent(from: transactions)
 
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
+            VStack(alignment: .leading, spacing: 26) {
                 header(date: referenceDate, todayTotal: todayTotal)
 
                 BudgetGaugeView(spent: monthSpent, goal: goalAmount)
@@ -54,7 +57,7 @@ struct HomeView: View {
     }
 
     private func header(date: Date, todayTotal: Decimal) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 8) {
             Text(date, format: .dateTime.weekday(.wide).month(.wide).day())
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
@@ -68,7 +71,7 @@ struct HomeView: View {
     }
 
     private func focusCard(spent: Decimal, goal: Decimal) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 8) {
             Text("Your monthly focus")
                 .font(.subheadline.bold())
             Text(focusMessage(spent: spent, goal: goal))

@@ -27,21 +27,28 @@ struct BudgetGaugeView: View {
             colors: [.orange.opacity(0.85), .orange],
             center: .bottom,
             startAngle: .degrees(180),
-            endAngle: .degrees(360)
+            endAngle: .degrees(360),
         )
     }
 
     var body: some View {
         ZStack(alignment: .center) {
+            // Inner arc bar
             HalfArc()
-                .stroke(Color(.systemGray5),
+                .stroke(Color(.systemGray5).shadow(.inner(radius: 10, x: 0, y: 0)),
                         style: StrokeStyle(lineWidth: 22, lineCap: .round))
+                .opacity(0.3)
+                .overlay(alignment: .center) {
 
+
+                }
+            // Outer progress bar
             HalfArc()
                 .trim(from: 0, to: progress)
-                .stroke(arcGradient,
+                .stroke(arcGradient.shadow(.inner(radius: 2, x: 1, y: 1)),
                         style: StrokeStyle(lineWidth: 22, lineCap: .round))
                 .animation(.smooth, value: progress)
+            
 
             VStack(spacing: 4) {
                 HStack(spacing: 4) {

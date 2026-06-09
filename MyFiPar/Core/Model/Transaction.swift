@@ -10,27 +10,18 @@ import SwiftData
 
 @Model
 class Transaction {
-    @Attribute(.unique) var id: UUID
-    var amount: Double
-    var category: TransactionCategory
+    var id: UUID = UUID()
+    var amount: Decimal = 0.0
+    var category: TransactionCat = TransactionCat.other
     var date: Date
-    var merchant: String
+    var merchant: String?
     
-    init(id: UUID = UUID(), amount: Double, category: TransactionCategory, date: Date, merchant: String) {
+    init(id: UUID = UUID(), amount: Decimal, category: TransactionCat, date: Date, merchant: String) {
         self.id = id
         self.amount = amount
-        self.category = TransactionCategory(rawValue: category.rawValue)!
+        self.category = category
         self.date = date
         self.merchant = merchant
     }
 }
 
-protocol Updateable { }
-
-extension NSObject: Updateable {}
-
-extension Updateable where Self: NSObject {
-    func update(completion: (Self) -> Void) {
-        completion(self)
-    }
-}

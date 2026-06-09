@@ -2,10 +2,16 @@
 
 ## What this app is
 
-MyFiPar is a personal-finance / expense-tracking iOS app. Users log
-transactions (amount, merchant, category, date), view them in a list, and tap
-in for details. A `Goal` model exists for upcoming budget-goal features but is
-not yet wired into the UI.
+MyFiPar is a personal-finance / expense-tracking iOS app organized around a
+**monthly spending goal**. The user sets a `Goal.amount` for the current month;
+the home dashboard surfaces today's spend, month-to-date spend vs. the goal,
+and a preview of recent transactions. Daily numbers exist to inform the
+overarching monthly target — the success metric is "stay under the monthly
+goal," not any per-day budget.
+
+Users log transactions (amount, merchant, category, date), view them in a
+list, and tap in for details. `Goal` is the budget-cap model that drives the
+dashboard math.
 
 ## Platform and language targets
 
@@ -36,7 +42,15 @@ not yet wired into the UI.
 - `TransactionCat` — `String, Codable, CaseIterable` enum (Housing, Food,
   Transportation, Utilities, Healthcare, Entertainment, Shopping, Education,
   Income, Other).
-- `Goal` (`@Model`) — placeholder for budget goals. Not yet shown in UI.
+- `Goal` (`@Model`) — Monthly budget cap. `amount: Decimal`, `periodStart: Date`
+  (start of the month the goal applies to). Exposes `spent(from:in:)`,
+  `remaining(from:in:)`, and `progress(from:in:)` which take the full
+  transactions array and a reference date, and exclude `.income` from spend.
+  The active goal is the one whose `periodStart` matches the current month.
+- `MonthSchedule` (`Core/UI`) — `TimelineSchedule` that fires at the start of
+  each calendar month. Wrap month-dependent views in
+  `TimelineView(MonthSchedule()) { context in … }` so they re-render at month
+  rollover without manual refresh.
 
 ## Conventions already in use (keep consistent)
 

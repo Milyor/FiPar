@@ -10,25 +10,26 @@ struct QuickAdd: View {
     @Environment(\.dismiss) private var dismiss
     var onsave: (Transaction) -> Void
     
-    @State private var amount: Decimal = 0.00
+    @State private var amount: Decimal? = nil
     @State private var date: Date = Date()
-    @State private var category: TransactionCategory = .other
+    @State private var category: TransactionCat = .other
     @State private var merchant: String = ""
     
     
     var body: some View {
         NavigationStack {
             Form {
-                Section(header: Text("Transaction")) {
+                Section(header: Text("Expense")) {
                     TextField("Merchant", text: $merchant)
-                    TextField("Amount", value: $amount, format: .number)
+                    TextField("$", value: $amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+                        .keyboardType(.decimalPad)
                     Picker("Category", selection: $category) {
-                        ForEach(TransactionCategory.allCases, id: \.self){
+                        ForEach(TransactionCat.allCases, id: \.self){
                             category in Text(category.rawValue)
                         }
                     }
                 }
-                .navigationTitle(Text("Quick Add"))
+            } .navigationTitle(Text("Quick Add"))
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
                         Button("Cancel") {dismiss()}
@@ -36,7 +37,7 @@ struct QuickAdd: View {
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Add") {
                             let newTransaction = Transaction(
-                                amount: amount,
+                                amount: amount ?? 0,
                                 category: category,
                                 date: date,
                                 merchant: merchant)
@@ -45,7 +46,6 @@ struct QuickAdd: View {
                         }
                     }
                 }
-            }
         }
     }
     
