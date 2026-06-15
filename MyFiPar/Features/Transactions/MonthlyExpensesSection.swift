@@ -7,7 +7,7 @@ import SwiftUI
 
 struct MonthlyExpensesSection: View {
     let displayedMonth: Date
-    let transactions: [Transaction]
+    let monthTransactions: [Transaction]
     let onDelete: (Transaction) -> Void
 
     private var monthDisplayName: String {
@@ -23,7 +23,7 @@ struct MonthlyExpensesSection: View {
             .font(.title3.bold())
             .padding(.horizontal)
 
-        if transactions.isEmpty {
+        if monthTransactions.isEmpty {
             ContentUnavailableView(
                 "No expenses",
                 systemImage: "tray",
@@ -32,14 +32,14 @@ struct MonthlyExpensesSection: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
             List {
-                ForEach(transactions) { transaction in
+                ForEach(monthTransactions) { transaction in
                     NavigationLink(value: transaction) {
                         TransactionRow(transaction: transaction)
                     }
                 }
                 .onDelete { indexSet in
                     for index in indexSet {
-                        onDelete(transactions[index])
+                        onDelete(monthTransactions[index])
                     }
                 }
             }

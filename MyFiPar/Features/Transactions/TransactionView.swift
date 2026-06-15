@@ -21,8 +21,8 @@ struct TransactionView: View {
 
     private let calendar: Calendar = .current
 
-    private var markedDates: Set<Date> {
-        Set(transactions.map { calendar.startOfDay(for: $0.date) })
+    private var index: TransactionsIndex {
+        TransactionsIndex(transactions, calendar: calendar)
     }
 
     private var monthTitle: String {
@@ -41,31 +41,37 @@ struct TransactionView: View {
         return displayedMonth.formatted(format)
     }
 
-    private var transactionsForSelectedDate: [Transaction] {
+    private func transactionsForSelectedDate(using index: TransactionsIndex) -> [Transaction] {
         guard let selectedDate else { return [] }
-        return transactions
-            .filter { calendar.isDate($0.date, inSameDayAs: selectedDate) }
-            .sorted { $0.date > $1.date }
+        return index.transactions(on: selectedDate)
     }
 
-    private var transactionsForMonth: [Transaction] {
-        transactions
-            .filter { calendar.isDate($0.date, equalTo: displayedMonth, toGranularity: .month) }
-            .sorted { $0.date > $1.date }
+    private func transactionsForMonth(using index: TransactionsIndex) -> [Transaction] {
+        index.transactions(inMonthOf: displayedMonth)
     }
 
     private var shouldShowAddButton: Bool {
         viewMode == .daily && selectedDate != nil
     }
 
+    private var isAtCurrentPeriod: Bool {
+        let granularity: Calendar.Component = (viewMode == .monthly) ? .year : .month
+        return calendar.isDate(displayedMonth, equalTo: .now, toGranularity: granularity)
+    }
+
     var body: some View {
+        @Bindable var viewModel = viewModel
+        let index = index
+
         NavigationStack {
             VStack(alignment: .leading, spacing: 16) {
                 TransactionsTopBar(
                     viewMode: $viewMode,
                     monthTitle: monthTitle,
                     showAddButton: shouldShowAddButton,
+                    isAtCurrentPeriod: isAtCurrentPeriod,
                     onShiftPeriod: shiftPeriod,
+                    onResetToCurrent: resetToCurrentPeriod,
                     onAdd: { showingAddSheet = true }
                 )
                 .padding(.horizontal)
@@ -73,7 +79,7 @@ struct TransactionView: View {
                 MonthCalendarView(
                     selectedDate: $selectedDate,
                     displayedMonth: $displayedMonth,
-                    markedDates: markedDates,
+                    markedDates: index.markedDays,
                     displayMode: viewMode == .daily ? .days : .months
                 )
                 .padding(.horizontal)
@@ -82,13 +88,13 @@ struct TransactionView: View {
                 case .daily:
                     DailyExpensesSection(
                         selectedDate: selectedDate,
-                        transactions: transactionsForSelectedDate,
+                        dayTransactions: transactionsForSelectedDate(using: index),
                         onDelete: { viewModel.deleteTransaction(transaction: $0, context: context) }
                     )
                 case .monthly:
                     MonthlyExpensesSection(
                         displayedMonth: displayedMonth,
-                        transactions: transactionsForMonth,
+                        monthTransactions: transactionsForMonth(using: index),
                         onDelete: { viewModel.deleteTransaction(transaction: $0, context: context) }
                     )
                 }
@@ -115,7 +121,18 @@ struct TransactionView: View {
     private func shiftPeriod(by value: Int) {
         let component: Calendar.Component = (viewMode == .monthly) ? .year : .month
         if let new = calendar.date(byAdding: component, value: value, to: displayedMonth) {
-            displayedMonth = new
+            withAnimation(.easeInOut(duration: 0.25)) {
+                displayedMonth = new
+            }
         }
     }
+
+    private func resetToCurrentPeriod() {
+        withAnimation(.easeInOut(duration: 0.25)) {
+            displayedMonth = .now
+        }
+    }
+}
+#Preview {
+    TransactionView()
 }

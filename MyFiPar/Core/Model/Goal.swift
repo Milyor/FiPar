@@ -11,9 +11,8 @@ import SwiftData
 class Goal {
     var id: UUID = UUID()
     var amount: Decimal = 0.0
-    var periodStart: Date
-    
-    
+    var periodStart: Date = Date()
+
     init(id: UUID = UUID(), amount: Decimal, month: Date) {
         self.id = id
         self.amount = amount

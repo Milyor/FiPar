@@ -12,7 +12,7 @@ struct TransactionRow: View {
         HStack {
             VStack(alignment: .leading) {
                 Text(transaction.merchant ?? "Unassigned")
-                Text(transaction.date, format: .dateTime.month().day())
+                Text(transaction.date, format: .dateTime.hour().minute())
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

@@ -11,25 +11,31 @@ struct QuickAdd: View {
     var onsave: (Transaction) -> Void
     
     @State private var amount: Decimal? = nil
-    @State private var date: Date = Date()
+    @State private var date: Date
     @State private var category: TransactionCat = .other
     @State private var merchant: String = ""
+    
+    init(initialDate: Date = Date(), onsave: @escaping (Transaction) -> Void) {
+        self.onsave = onsave
+        self._date = State(initialValue: initialDate)
+    }
     
     
     var body: some View {
         NavigationStack {
             Form {
-                Section(header: Text("Expense")) {
+                Section("Expense") {
                     TextField("Merchant", text: $merchant)
                     TextField("$", value: $amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
                         .keyboardType(.decimalPad)
                     Picker("Category", selection: $category) {
-                        ForEach(TransactionCat.allCases, id: \.self){
-                            category in Text(category.rawValue)
+                        ForEach(TransactionCat.allCases, id: \.self) { category in
+                            Text(category.rawValue).tag(category)
                         }
                     }
                 }
-            } .navigationTitle(Text("Quick Add"))
+            }
+            .navigationTitle("Quick Add")
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
                         Button("Cancel") {dismiss()}

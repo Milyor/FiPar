@@ -38,8 +38,6 @@ struct TransactionDetailView: View {
             Spacer()
         }
         .padding()
-        .contentShape(Rectangle())
         .navigationTitle("Details")
-        .navigationBarBackButtonHidden(false)
     }
 }
