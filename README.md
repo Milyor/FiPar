@@ -4,7 +4,8 @@ A manual-first personal expense tracker for iOS, built end-to-end in Swift and S
 
 The philosophy is **tracker first, AI second** — a calm, focused app where logging an expense is fast and pleasant, and the home screen answers one question: *am I okay this month?* It is deliberately the opposite of AI-maximalist budgeting apps. No bank connections, no statement parsing — manual entry is the core, on purpose, because the small friction of logging is what creates spending awareness.
 
-<!-- TODO: Add a screen-recording GIF here showing the budget gauge updating live as an expense is logged. This is the headline — put it above the fold. e.g. ![Logging an expense updates the gauge](docs/demo.gif) -->
+<img src="https://github.com/Milyor/FiPar/blob/8de8dce9191e491d1a7a83c0b00a14cbbc0ea73a/Simulator%20Screenshot%20-%20iPhone%2017%20-%202026-06-17%20at%2018.13.11.png" width="300" alt="Home Screen">
+<img src="https://github.com/Milyor/FiPar/blob/8de8dce9191e491d1a7a83c0b00a14cbbc0ea73a/Simulator%20Screenshot%20-%20iPhone%2017%20-%202026-06-17%20at%2018.14.01.png" width="300" alt="Logging Screen">
 
 > **Status: in active development.** The core loop works (set goal → log expense → gauge and numbers update → data persists). The signature *forward-looking "on-pace-to-save" projection*, AI insights, and CloudKit sync are designed but not yet implemented — see [Roadmap](#roadmap).
 
@@ -13,6 +14,8 @@ The philosophy is **tracker first, AI second** — a calm, focused app where log
 A few deliberate product decisions drive the whole design:
 
 - **Manual entry, no Plaid / no bank linking.** Considered and rejected for v1 due to privacy and reliability concerns. The logging friction is a feature for the FIRE audience, not a bug.
+<img src ="https://github.com/Milyor/FiPar/blob/8de8dce9191e491d1a7a83c0b00a14cbbc0ea73a/Simulator%20Screenshot%20-%20iPhone%2017%20-%202026-06-17%20at%2018.13.43.png" width="300" alt="Manual Entry">
+
 - **The home screen is glanceable.** It shows month-to-date spend against a monthly goal and how much is left — not a wall of analytics. "Where did it go?" lives one screen deeper, in the transactions view.
 - **A monthly goal gives spending meaning.** Every logged expense instantly updates the gauge; that immediate feedback is the intended retention loop.
 - **No ads.** A free tier limited by scope; a planned paid tier adds power features (multiple goals, AI insights, multi-currency, export).
@@ -50,7 +53,6 @@ MyFiParUITests/ UI tests
 
 Requires a recent Xcode and an iOS simulator or device. Open `MyFiPar.xcodeproj`, select a simulator, and run. There are no secrets or config files required to build the current version.
 
-<!-- TODO: Add a TestFlight link here once the core goal-entry flow is in, as a one-tap live demo. e.g. **[Try it on TestFlight](https://testflight.apple.com/join/XXXXXXXX)** -->
 
 ## Roadmap
 
