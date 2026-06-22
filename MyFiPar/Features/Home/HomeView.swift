@@ -11,6 +11,7 @@ struct HomeView: View {
     @Query private var goals: [Goal]
     @Environment(\.modelContext) private var modelContext
     @State private var viewModel = HomeViewModel()
+    @State private var isShowingGoalSettings = false
 
     var body: some View {
         NavigationStack {
@@ -21,6 +22,16 @@ struct HomeView: View {
             .background(Color(.systemGroupedBackground))
             .navigationDestination(for: Transaction.self) { transaction in
                 TransactionDetailView(transaction: transaction)
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Monthly Goal", systemImage: "target") {
+                        isShowingGoalSettings = true
+                    }
+                }
+            }
+            .sheet(isPresented: $isShowingGoalSettings) {
+                GoalSettingsView()
             }
         }
         .task {
